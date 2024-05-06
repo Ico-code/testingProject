@@ -1,0 +1,62 @@
+#******************** Settings ************************
+
+*** Settings ***
+
+Documentation    Testing User Registration Functionality. Test scenario with valid and invalid credentials.
+
+Pre Condition   Open Browser
+Post Condition  Close All Browsers
+Tags    Registration
+
+#******************* Common Variables ********************
+
+*** Variables ***
+Valid_Username = valid_username
+Valid_Password = valid_password
+Existing_Username = valid_username
+Invalid_Email = invalid_email
+
+# Registration field variables
+RegistrationUrl = https://gitlab.com/users/sign_up
+
+#******************** Test Cases *************************
+
+*** Test Cases ***
+
+# Positive Tests
+
+Register User With Valid Username and Password
+    Navigate To Registration Page RegistrationUrl
+    Input Username    valid_username
+    Input Password    valid_password
+	Complete the reCAPTCHA
+    Submit Registration Form
+    Verify Email Page Should Appear
+
+# Negative Tests
+
+Register User With Same Username
+    Navigate To Registration Page    RegistrationUrl
+    Input Username    existing_username
+    Input Password    valid_password
+    Verify Page Should Contain Text Reading This Username is Already Taken
+
+Register User With Empty Password
+    Navigate To Registration Page    RegistrationUrl
+    Input Username    Valid_Username
+    Input Password    EMPTY
+    Verify Page Should Contain Text Reading This Fields is Required, Next to the Password Field
+
+Register User With Invalid Email
+    Navigate To Registration Page    RegistrationUrl
+    Input Username    Valid_Username
+    Input Password    valid_password
+    Input Email    invalid_email
+    Verify Page Should Contain an Error Regarding an Invalid Email Address
+
+Register User Without Recaptcha
+    Navigate To Registration Page    RegistrationUrl
+    Input Username    Valid_Username
+    Input Password    valid_password
+    Submit Registration Form Without Recaptcha
+    Verify Page Should Contain Please complete the reCAPTCHA

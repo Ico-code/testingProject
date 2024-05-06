@@ -1,0 +1,104 @@
+
+#******************** Settings ************************
+
+*** Settings ***
+
+# TODO: Write Dcocumentation e.g. Project Test scenario. CRUD Operation: Create, Read, Update, Delete
+
+Documentation	
+
+# TODO: Write Precondition, Postcondition, Tags
+
+Pre Condition	Open Web Browser, Login to Gitlab
+Post Condition	CLose browsers
+Tags 	Project Creation
+
+#******************* Common Variables ********************
+
+*** Variables ***
+
+ProjectCreationURL: https://gitlab.com/projects/new
+
+# TODO: Write Project creation field variables
+
+# URLs for project pages
+ExistingProjectUrl = https://gitlab.com/hallowed1/testproject1
+
+# Project details
+ExistingProjectName = TestProject1
+Existing_rojectOwner = John Doe
+
+# New project details
+NewProjectName = TestProject1
+NewProjectDescription = This is a new project created for testing purposes.
+deploymentTarget = No deployment planned
+visibilityLevel = public
+
+# New project details
+TemplateProjectName = TestProject2
+TemplateProjectDescription = This is a new project created for testing purposes.
+TemplateVisibilityLevel = public
+Empty =
+
+TemplateName = NodeJS Express
+
+#******************** Test Cases *************************
+
+*** Test Case ***
+
+# TODO: Write Positive and Negative Test Cases and Test Process steps
+
+# Positive Tests
+
+Create Project
+    Navigate To Project Creation Page    ProjectCreationURL
+    Enter Project Name    NewProjectName
+	Enter Project Description 		NewProjectDescription
+	Enter Project Deployment Target		deploymentTarget
+	Enter Project Visibility level		visibilityLevel
+	Check That Project Configuration Has "Initialize repository with README" Checked
+    Create Project
+    Verify That Project Page is Opened for the Newly Created Project
+
+Create Template Project
+    Navigate To Project Creation Page    ProjectCreationURL
+    Use Template    TemplateName
+    Enter Project Name    TemplateProjectName
+	Enter Project Description 		TemplateProjectDescription
+	Enter Project Visibility level		TemplateVisibilityLevel
+    Create Project
+    Verify That Project Page is Opened, and Should Contain "The project was successfully imported."
+
+Update Project Description
+    Navigate To Project Page    ExistingProjectUrl
+    Click On the Three dots, located in the upper right corner
+	Click on Project Settings
+    Enter New Project Description    TemplateProjectDescription
+    Save Changes
+    Verify Page Should Contain Success Message    Project 'Project Name' was successfully updated.
+
+Delete Project
+    Navigate To Project Page    ExistingProjectUrl
+    Click On the Three dots, located in the upper right corner
+	Click on Project Settings
+	Scroll Down to Advanced Setting and Click Expand
+	Scroll Down to Delete this project Section Down at the Bottom of the Page
+    Click Delete Project
+    Confirm Deletion
+    Verify Page Should Contain Success Message    Project 'Project Name' will be deleted on Date
+
+# Negative Tests
+
+Create Project With Empty Name
+    Navigate To Project Creation Page    ProjectCreationURL
+	Input Project Name Empty
+    Try to Create Project
+    Verify Page Should Contain Error Message next to the field for Project Name    Please fill in this field.
+
+Delete Project Without Confirmation
+    Navigate To Project Page    ExistingProjectUrl
+	Click on Project Settings
+	Scroll Down to Advanced Setting and Click Expand
+	Scroll Down to Delete this project Section Down at the Bottom of the Page
+    Click Delete Project
+    Verify Page Should Allow for Project Deletion without Confirmation.
